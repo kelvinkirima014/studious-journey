@@ -19,5 +19,16 @@ contract Coin {
         require (amount < 1e60);
         balances[receiver] += amount;
     }
-
+    error InsufficientBalance(uint requested, uint available);
+    function send (address receiver, uint amount) public {
+        if (amount > balances[msg.sender])
+        revert InsufficientBalance({
+            requested: amount,
+            available: balances[msg.sender]
+        });
+        balances[msg.sender] -= amount;
+        balances[receiver] += amount;
+        emit Sent(msg.sender, receiver, amount);
+    }
+   
 }
